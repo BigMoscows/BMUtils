@@ -5,14 +5,16 @@
 # $1 -> start time
 # $2 -> duration
 # $3 -> video_source
-# $4 -> output
+# $4 -> output audio
+# $5 -> output_gif
 
 display_usage() { 
 	echo "You must provide the following parameters to extract audio and gif" 
 	echo -e "1: start time - e.g. 00:03:15.800" 
 	echo -e "2: duration - e.g. 00:00:02.300" 
 	echo -e "3: video source - e.g. video.mkv" 
-	echo -e "4: output name - e.g. door" 
+	echo -e "4: audio output name - e.g. /audio/door.mp3" 
+	echo -e "5: gif output name - e.g. /gif/door.gif" 
 	} 
 
 # check whether user had supplied -h or --help . If yes display usage 
@@ -23,16 +25,16 @@ display_usage() {
 	fi
 
 # if less than two arguments supplied, display usage 
-	if [  $@ -le 4 ] 
+	if [  $@ -le 5 ] 
 	then 
-                echo "Less than 4 args"
+        echo "Less than 4 args"
 		display_usage
 		exit 1
 	fi 
 
-ffmpeg -ss $1 -t $2 -i $3 $4.mp3
+ffmpeg -ss $1 -t $2 -i $3 $4
 
 ffmpeg -ss $1 -t $2 -i $3 -filter_complex "[0:v] palettegen" palette.png
-ffmpeg -ss $1 -t $2 -i $3 -i palette.png -filter_complex "[0:v][1:v] paletteuse" $4.gif
+ffmpeg -ss $1 -t $2 -i $3 -i palette.png -filter_complex "[0:v][1:v] paletteuse" $5
 
 rm palette.png
