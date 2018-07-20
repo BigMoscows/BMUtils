@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# extract -ss 00:03:15.800 -t 00:00:02.300 -i input -o ouput
+
+# $1 -> start time
+# $2 -> duration
+# $3 -> video_source
+# $4 -> output
+
+display_usage() { 
+	echo "You must provide the following parameters to extract audio and gif" 
+	echo -e "1: start time - e.g. 00:03:15.800" 
+	echo -e "2: duration - e.g. 00:00:02.300" 
+	echo -e "3: video source - e.g. video.mkv" 
+	echo -e "4: output name - e.g. door" 
+	} 
+
+# check whether user had supplied -h or --help . If yes display usage 
+	if [[ ( $# == "--help") ||  $# == "-h" ]] 
+	then 
+		display_usage
+		exit 0
+	fi
+
+# if less than two arguments supplied, display usage 
+	if [  $# -le 4 ] 
+	then 
+		display_usage
+		exit 1
+	fi 
+
+ffmpeg -ss $1 -t $2 -i $3 $4.mp3
+
+ffmpeg -ss $1 -t $2 -i $3 -filter_complex "[0:v] palettegen" palette.png
+ffmpeg -ss $1 -t $2 -i $3 -i palette.png -filter_complex "[0:v][1:v] paletteuse" $4.gif
